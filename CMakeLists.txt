@@ -1,11 +1,15 @@
 cmake_minimum_required(VERSION 3.10)
 project(CampusResourceReservation)
 
+set(EXECUTABLE_NAME ${PROJECT_NAME})
+
 set(SOURCE_FILES
     "src/main.cpp"
-    # "src/Resource.cpp"
+    "src/Resource.cpp"
     # "src/Reservation.cpp"
     # "src/ReservationManager.cpp"
 )
 
-add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+add_executable(${EXECUTABLE_NAME} ${SOURCE_FILES})
+
+target_include_directories(${EXECUTABLE_NAME} PRIVATE "${PROJECT_SOURCE_DIR}/include")
