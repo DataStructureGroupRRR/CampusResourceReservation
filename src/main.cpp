@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <vector>
 
 #include "Resource.h"
 
@@ -7,54 +8,52 @@ using namespace std;
 
 int choice = -1;
 
-void readResources(ifstream& file) {
-    string room;
+void readResources(ifstream& file, vector<Resource>& resources) {
+    string id;
     string name;
     string type;
     string availableS;
 
-    while (!file.eof()) {
-        getline(file, room, '|');
-        cout << room << endl;
-
+    while (file.peek() != EOF && !file.eof()) {
+        getline(file, id, '|');
         getline(file, name, '|');
-        cout << name << endl;
-
         getline(file, type, '|');
-        cout << type << endl;
-
         getline(file, availableS);
-        cout << availableS << endl;
 
-        // reads newline character
-        file.get();
+        Resource rs(id, name, type, availableS == "Available");
+        resources.push_back(rs);
+    }
+}
 
-        Resource rs(room, name, type, availableS == "Available");
-        cout << rs.IsAvailable() << endl;
+void viewResources(vector<Resource>& resources) {
+    for (const Resource& res : resources) {
+        cout << res.GetId() << endl;
     }
 }
 
 int main() {
     ifstream resourceFile("data/resources.txt");
+    vector<Resource> resources;
+
     if (!resourceFile.is_open()) {
         cout << "Could not open resources.txt!" << endl;
         return 1;
     }
 
-    readResources(resourceFile);
+    readResources(resourceFile, resources);
 
     resourceFile.close();
 
     while (choice != 9) {
-        cout << "===== Campus Resource Reservation System =====" << endl;
-        cout << "1. View Resources" << endl;
-        cout << "2. Create Reservation" << endl;
-        cout << "3. Cancel Reservation" << endl;
-        cout << "4. View Waiting Lists" << endl;
-        cout << "5. Undo Cancellation" << endl;
-        cout << "6. Search Reservations" << endl;
-        cout << "7. Sort Resources" << endl;
-        cout << "8. Generate Report" << endl;
+        cout << "===== Campus Resource Reservation System =====\n";
+        cout << "1. View Resources\n";
+        cout << "2. Create Reservation\n";
+        cout << "3. Cancel Reservation\n";
+        cout << "4. View Waiting Lists\n";
+        cout << "5. Undo Cancellation\n";
+        cout << "6. Search Reservations\n";
+        cout << "7. Sort Resources\n";
+        cout << "8. Generate Report\n";
         cout << "9. Exit\n\n" << flush;
 
         cout << "Enter Choice: ";
@@ -63,6 +62,7 @@ int main() {
 
         switch (choice) {
             case 1:
+                viewResources(resources);
                 break;
             case 2:
                 break;

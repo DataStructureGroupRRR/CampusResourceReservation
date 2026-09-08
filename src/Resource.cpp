@@ -2,26 +2,26 @@
 
 using namespace std;
 
-Resource::Resource(const string& room, const string& name, const string& type, bool available) {
-    roomNum = room;
-    resName = name;
-    resType = type;
-    isAvailable = available;
+Resource::Resource(const string& id, const string& name, const string& type, bool available) {
+    this->id = id;
+    this->name = name;
+    this->type = type;
+    this->isAvailable = available;
 }
 
-string Resource::GetRoomNumber() {
-    return roomNum;
+string Resource::GetId() const {
+    return id;
 }
 
-string Resource::GetResourceName() {
-    return resName;
+string Resource::GetName() const {
+    return name;
 }
 
-string Resource::GetResourceType() {
-    return resType;
+string Resource::GetType() const {
+    return type;
 }
 
-bool Resource::IsAvailable() {
+bool Resource::IsAvailable() const {
     return isAvailable;
 }
 
