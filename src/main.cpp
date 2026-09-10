@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "Resource.h"
+#include "ReservationManager.h"
 
 using namespace std;
 
@@ -77,6 +78,8 @@ int main() {
 
     resourceFile.close();
 
+    ReservationManager reservMan;
+
     while (choice != 9) {
         cout << "===== Campus Resource Reservation System =====\n";
         cout << "1. View Resources\n";
@@ -98,6 +101,7 @@ int main() {
                 viewResources(resources, longestName, longestType);
                 break;
             case 2:
+                reservMan.CreateReservation();
                 break;
             case 3:
                 break;

@@ -5,9 +5,9 @@ set(EXECUTABLE_NAME ${PROJECT_NAME})
 
 set(SOURCE_FILES
     "src/main.cpp"
+    "src/Reservation.cpp"
+    "src/ReservationManager.cpp"
     "src/Resource.cpp"
-    # "src/Reservation.cpp"
-    # "src/ReservationManager.cpp"
 )
 
 add_executable(${EXECUTABLE_NAME} ${SOURCE_FILES})
