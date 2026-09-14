@@ -5,6 +5,8 @@
 
 class ReservationManager {
     public:
+        ReservationManager();
+
         void CreateReservation();
         void CancelReservation();
         void RestoreReservation();
@@ -13,6 +15,8 @@ class ReservationManager {
 
         ~ReservationManager();
     private:
+        int highestId;
+
         Node<Reservation>* head;
         Node<Reservation>* tail;
 };

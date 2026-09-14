@@ -110,6 +110,7 @@ int main() {
             case 5:
                 break;
             case 6:
+                reservMan.ViewReservations();
                 break;
             case 7:
                 break;

@@ -3,8 +3,8 @@
 using namespace std;
 
 Reservation::Reservation(
-    const string& id, 
-    const string& studId, 
+    int id, 
+    int studId, 
     const string& studName, 
     const string& resId, 
     const string& date
@@ -16,11 +16,11 @@ Reservation::Reservation(
     this->date = date;
 }
 
-string Reservation::GetId() const {
+int Reservation::GetId() const {
     return id;
 }
 
-string Reservation::GetStudentId() const {
+int Reservation::GetStudentId() const {
     return studId;
 }
 
