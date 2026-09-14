@@ -1,3 +1,6 @@
+#ifndef NODE_H
+#define NODE_H
+
 template <typename T>
 class Node {
     public:
@@ -11,3 +14,5 @@ class Node {
         Node<T>* prev;
         Node<T>* next;
 };
+
+#endif // NODE_H

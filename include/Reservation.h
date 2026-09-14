@@ -1,3 +1,6 @@
+#ifndef RESERVATION_H
+#define RESERVATION_H
+
 #include <string>
 
 class Reservation {
@@ -22,3 +25,5 @@ class Reservation {
         std::string resId;
         std::string date;
 };
+
+#endif // RESERVATION_H

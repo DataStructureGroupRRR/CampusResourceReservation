@@ -1,3 +1,6 @@
+#ifndef RESERVATION_MAN_H
+#define RESERVATION_MAN_H
+
 #include <stack>
 
 #include "Reservation.h"
@@ -20,3 +23,5 @@ class ReservationManager {
         Node<Reservation>* head;
         Node<Reservation>* tail;
 };
+
+#endif // RESERVATION_MAN_H
