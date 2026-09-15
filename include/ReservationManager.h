@@ -22,6 +22,8 @@ class ReservationManager {
 
         Node<Reservation>* head;
         Node<Reservation>* tail;
+
+        std::stack<Reservation> cancelledHistory;
 };
 
 #endif // RESERVATION_MAN_H
