@@ -1,7 +1,6 @@
 #include <iostream>
 #include <iomanip>
 #include <ctime>
-#include <queue>
 
 #include "ReservationManager.h"
 
@@ -53,9 +52,65 @@ void ReservationManager::ViewReservations(Node<Reservation>* head) {
 
 ReservationManager::ReservationManager() {
     this->highestId = 0;
+    this->longestName = 0;
+    this->longestType = 0;
 
     this->head = nullptr;
     this->tail = nullptr;
+}
+
+void ReservationManager::ReadResources(ifstream& file) {
+    string id;
+    string name;
+    string type;
+    string availableS;
+
+    resources.clear();
+
+    while (file.peek() != EOF && !file.eof()) {
+        getline(file, id, '|');
+        getline(file, name, '|');
+        getline(file, type, '|');
+        getline(file, availableS);
+
+        Resource rs(id, name, type, availableS == "Available");
+        resources.push_back(rs);
+
+        // gets the lengths of the longest names for formatting
+        if (name.length() > longestName) {
+            longestName = name.length();
+        }
+
+        if (type.length() > longestType) {
+            longestType = type.length();
+        }
+    }
+}
+
+void ReservationManager::ViewResources() {
+    // adds padding to formatting
+
+    int nameLen = max(longestName, 2) + 4;
+    int typeLen = max(longestType, 4) + 4;
+
+    cout << setfill(' ') << left;
+
+    cout << setw(8) << "ID";
+    cout << setw(nameLen) << "Name";
+    cout << setw(typeLen) << "Type";
+    cout << setw(12) << "Availability" << endl;
+
+    cout << setfill('-') << setw(8 + nameLen + typeLen + 12) << "" << endl;
+    
+    cout << setfill(' ');
+    for (const Resource& res : resources) {
+        cout << setw(8) << res.GetId();
+        cout << setw(nameLen) << res.GetName();
+        cout << setw(typeLen) << res.GetType();
+        cout << setw(12) << (res.IsAvailable() ? "Available" : "Unavailable") << endl;
+    }
+
+    cout << endl;
 }
 
 void ReservationManager::CreateReservation() {
@@ -184,77 +239,80 @@ Node<Reservation>* ReservationManager::SearchReservations() const {
     cout << "Enter choice: ";
     cin >> choice;
 
-    switch (choice) {
-        case 1: {
-            string resId;
-            
-            cout << "Enter Resource ID: ";
-            cin >> resId;
+    while (choice != -1) {
+        switch (choice) {
+            case 1: {
+                string resId;
+                
+                cout << "Enter Resource ID: ";
+                cin >> resId;
 
-            node = head;
-            while (node) {
-                if (node->value.GetResourceId() == resId) {
-                    ADD_LIST
+                node = head;
+                while (node) {
+                    if (node->value.GetResourceId() == resId) {
+                        ADD_LIST
+                    }
+                    node = node->next;
                 }
-                node = node->next;
+                break;
             }
-            break;
-        }
-        case 2: {
-            int id;
+            case 2: {
+                int id;
 
-            cout << "Enter Reservation ID: ";
-            cin >> id;
+                cout << "Enter Reservation ID: ";
+                cin >> id;
 
-            node = head;
-            while (node) {
-                if (node->value.GetId() == id) {
-                    ADD_LIST
+                node = head;
+                while (node) {
+                    if (node->value.GetId() == id) {
+                        ADD_LIST
+                    }
+                    node = node->next;
                 }
-                node = node->next;
+                break;
             }
-            break;
-        }
-        case 3: {
-            int studId;
+            case 3: {
+                int studId;
 
-            cout << "Enter Student ID: ";
-            cin >> studId;
+                cout << "Enter Student ID: ";
+                cin >> studId;
 
-            node = head;
-            while (node) {
-                if (node->value.GetStudentId() == studId) {
-                    ADD_LIST
+                node = head;
+                while (node) {
+                    if (node->value.GetStudentId() == studId) {
+                        ADD_LIST
+                    }
+                    node = node->next;
                 }
-                node = node->next;
+                break;
             }
-            break;
-        }
-        case 4: {
-            string studName;
+            case 4: {
+                string studName;
 
-            cout << "Enter Student Name: ";
+                cout << "Enter Student Name: ";
 
-            // removes new line character from buffer if present
-            if (cin.peek() == '\n') {
-                cin.get();
-            }
-            getline(cin, studName);
-
-            node = head;
-            while (node) {
-                if (node->value.GetStudentName() == studName) {
-                    ADD_LIST
+                // removes new line character from buffer if present
+                if (cin.peek() == '\n') {
+                    cin.get();
                 }
-                node = node->next;
+                getline(cin, studName);
+
+                node = head;
+                while (node) {
+                    if (node->value.GetStudentName() == studName) {
+                        ADD_LIST
+                    }
+                    node = node->next;
+                }
+                break;
             }
-            break;
+            case 5:
+                break;
+            default:
+                cout << "Please enter a valid choice." << endl;
+                choice = -1;
+                break;
         }
-        case 5:
-            break;
-        default:
-            cout << "Please enter a valid choice." << endl;
-            break;
     }
 
     return listHead;

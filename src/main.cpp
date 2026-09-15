@@ -8,77 +8,20 @@
 
 using namespace std;
 
-void readResources(ifstream& file, vector<Resource>& resources, int& longestName, int& longestType) {
-    string id;
-    string name;
-    string type;
-    string availableS;
-
-    while (file.peek() != EOF && !file.eof()) {
-        getline(file, id, '|');
-        getline(file, name, '|');
-        getline(file, type, '|');
-        getline(file, availableS);
-
-        Resource rs(id, name, type, availableS == "Available");
-        resources.push_back(rs);
-
-        // gets the lengths of the longest names for formatting
-        if (name.length() > longestName) {
-            longestName = name.length();
-        }
-
-        if (type.length() > longestType) {
-            longestType = type.length();
-        }
-    }
-}
-
-void viewResources(vector<Resource>& resources, int longestName, int longestType) {
-    // adds padding to formatting
-
-    int nameLen = max(longestName, 2) + 4;
-    int typeLen = max(longestType, 4) + 4;
-
-    cout << setfill(' ') << left;
-
-    cout << setw(8) << "ID";
-    cout << setw(nameLen) << "Name";
-    cout << setw(typeLen) << "Type";
-    cout << setw(12) << "Availability" << endl;
-
-    cout << setfill('-') << setw(8 + nameLen + typeLen + 12) << "" << endl;
-    
-    cout << setfill(' ');
-    for (const Resource& res : resources) {
-        cout << setw(8) << res.GetId();
-        cout << setw(nameLen) << res.GetName();
-        cout << setw(typeLen) << res.GetType();
-        cout << setw(12) << (res.IsAvailable() ? "Available" : "Unavailable") << endl;
-    }
-
-    cout << endl;
-}
-
 int main() {
     int choice = -1;
-    int longestName = 0;
-    int longestType = 0;
 
     // reads from resources.txt
     ifstream resourceFile("data/resources.txt");
-    vector<Resource> resources;
+    ReservationManager reservMan;
 
     if (!resourceFile.is_open()) {
         cout << "Could not open resources.txt!" << endl;
         return 1;
     }
 
-    readResources(resourceFile, resources, longestName, longestType);
-
+    reservMan.ReadResources(resourceFile);
     resourceFile.close();
-
-    ReservationManager reservMan;
 
     while (choice != 9) {
         cout << "===== Campus Resource Reservation System =====\n";
@@ -98,7 +41,7 @@ int main() {
 
         switch (choice) {
             case 1:
-                viewResources(resources, longestName, longestType);
+                reservMan.ViewResources();
                 break;
             case 2:
                 reservMan.CreateReservation();

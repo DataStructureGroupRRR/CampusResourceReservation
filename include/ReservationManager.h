@@ -2,7 +2,10 @@
 #define RESERVATION_MAN_H
 
 #include <stack>
+#include <vector>
+#include <fstream>
 
+#include "Resource.h"
 #include "Reservation.h"
 #include "Node.h"
 
@@ -20,9 +23,12 @@ if (listHead) {\
 
 class ReservationManager {
     public:
-        static void ViewReservations(Node<Reservation>* begin);
+        static void ViewReservations(Node<Reservation>* head);
 
         ReservationManager();
+
+        void ReadResources(std::ifstream& file);
+        void ViewResources();
 
         void CreateReservation();
         void CancelReservation();
@@ -33,6 +39,11 @@ class ReservationManager {
         ~ReservationManager();
     private:
         int highestId;
+
+        int longestName;
+        int longestType;
+
+        std::vector<Resource> resources;
 
         Node<Reservation>* head;
         Node<Reservation>* tail;
