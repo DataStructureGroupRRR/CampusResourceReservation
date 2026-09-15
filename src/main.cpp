@@ -47,16 +47,28 @@ int main() {
                 reservMan.CreateReservation();
                 break;
             case 3:
+                reservMan.CancelReservation();
                 break;
             case 4:
                 break;
             case 5:
+                reservMan.RestoreReservation();
                 break;
             case 6: {
                 reservMan.ViewReservations();
 
-                Node<Reservation>* searchHead = reservMan.SearchReservations();
-                ReservationManager::ViewReservations(searchHead);
+                Node<Reservation>* searchHead = nullptr;
+                Node<Reservation>* nextNode = nullptr;
+                if (!reservMan.SearchReservations(searchHead)) {
+                    break;
+                }
+
+                if (searchHead) {
+                    ReservationManager::ViewReservations(searchHead);
+                    DELETE_LL(searchHead, nextNode)
+                } else {
+                    cout << "No matching reservations found.\n\n" << flush;
+                }
                 break;
             }
             case 7:

@@ -34,7 +34,7 @@ class ReservationManager {
         void CancelReservation();
         void RestoreReservation();
         void ViewReservations() const;
-        Node<Reservation>* SearchReservations() const;
+        bool SearchReservations(Node<Reservation>*& listHead) const;
 
         ~ReservationManager();
     private:

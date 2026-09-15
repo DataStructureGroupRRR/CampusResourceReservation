@@ -118,6 +118,7 @@ void ReservationManager::CreateReservation() {
     string studName;
     string resId;
 
+    bool foundRes = false;
     char date[11];
     
     cout << "Student ID: ";
@@ -128,6 +129,18 @@ void ReservationManager::CreateReservation() {
     getline(cin, studName);
     cout << "Resource ID: ";
     cin >> resId;
+
+    for (const Resource& res : resources) {
+        if (resId == res.GetId()) {
+            foundRes = true;
+            break;
+        }
+    }
+
+    if (!foundRes) {
+        cout << "No reservation with ID " << resId << " was found.\n\n" << flush;
+        return;
+    }
 
     highestId++;
 
@@ -222,11 +235,11 @@ void ReservationManager::ViewReservations() const {
     ReservationManager::ViewReservations(this->head);
 }
 
-Node<Reservation>* ReservationManager::SearchReservations() const {
+bool ReservationManager::SearchReservations(Node<Reservation>*& listHead) const {
     int choice = 0;
     Node<Reservation>* node = nullptr;
 
-    Node<Reservation>* listHead = nullptr;
+    listHead = nullptr;
     Node<Reservation>* listTail = nullptr;
     
     cout << "Search via\n";
@@ -236,10 +249,10 @@ Node<Reservation>* ReservationManager::SearchReservations() const {
     cout << "4. Student Name\n";
     cout << "5. Cancel\n\n" << flush;
 
-    cout << "Enter choice: ";
-    cin >> choice;
+    while (choice == 0) {
+        cout << "Enter choice: ";
+        cin >> choice;
 
-    while (choice != -1) {
         switch (choice) {
             case 1: {
                 string resId;
@@ -307,15 +320,15 @@ Node<Reservation>* ReservationManager::SearchReservations() const {
                 break;
             }
             case 5:
-                break;
+                return false;
             default:
                 cout << "Please enter a valid choice." << endl;
-                choice = -1;
+                choice = 0;
                 break;
         }
     }
 
-    return listHead;
+    return true;
 }
 
 ReservationManager::~ReservationManager() {
@@ -324,10 +337,5 @@ ReservationManager::~ReservationManager() {
     Node<Reservation>* node = head;
     Node<Reservation>* nextNode = nullptr;
 
-    while (node) {
-        nextNode = node->next;
-        delete node;
-
-        node = nextNode;
-    }
+    DELETE_LL(node, nextNode)
 }
