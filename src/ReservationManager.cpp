@@ -1,66 +1,13 @@
 #include <iostream>
 #include <iomanip>
 #include <ctime>
+#include <queue>
 
 #include "ReservationManager.h"
 
 using namespace std;
 
-ReservationManager::ReservationManager() {
-    this->highestId = 0;
-
-    this->head = nullptr;
-    this->tail = nullptr;
-}
-
-void ReservationManager::CreateReservation() {
-    int studId;
-    string studName;
-    string resId;
-
-    char date[11];
-    
-    cout << "Student ID: ";
-    cin >> studId;
-    cin.get();
-    
-    cout << "Student Name: ";
-    getline(cin, studName);
-    cout << "Resource ID: ";
-    cin >> resId;
-
-    // TODO: write proper dates
-    highestId++;
-
-    time_t timestamp = time(nullptr);
-    tm* dateTime = localtime(&timestamp);
-    strftime(date, 11, "%m/%d/%Y", dateTime);
-
-    Reservation r(highestId, studId, studName, resId, date);
-    Node<Reservation>* node = new Node<Reservation>(r);
-
-    if (head) {
-        tail->next = node;
-        node->prev = tail;
-
-        tail = node;
-    } else {
-        head = node;
-        tail = node;
-    }
-
-    cout << "Reservation Created Successfully.\n\n" << flush;
-}
-
-void ReservationManager::CancelReservation() {
-
-}
-
-void ReservationManager::RestoreReservation() {
-    
-}
-
-void ReservationManager::ViewReservations() const {
+void ReservationManager::ViewReservations(Node<Reservation>* head) {
     int studLen = 0;
 
     int curLen = 0;
@@ -104,11 +51,71 @@ void ReservationManager::ViewReservations() const {
     cout << endl;
 }
 
+ReservationManager::ReservationManager() {
+    this->highestId = 0;
+
+    this->head = nullptr;
+    this->tail = nullptr;
+}
+
+void ReservationManager::CreateReservation() {
+    int studId;
+    string studName;
+    string resId;
+
+    char date[11];
+    
+    cout << "Student ID: ";
+    cin >> studId;
+    cin.get();
+    
+    cout << "Student Name: ";
+    getline(cin, studName);
+    cout << "Resource ID: ";
+    cin >> resId;
+
+    highestId++;
+
+    time_t timestamp = time(nullptr);
+    tm* dateTime = localtime(&timestamp);
+    strftime(date, 11, "%m/%d/%Y", dateTime);
+
+    Reservation r(highestId, studId, studName, resId, date);
+    Node<Reservation>* node = new Node<Reservation>(r);
+
+    if (head) {
+        tail->next = node;
+        node->prev = tail;
+
+        tail = node;
+    } else {
+        head = node;
+        tail = node;
+    }
+
+    cout << "Reservation Created Successfully.\n\n" << flush;
+}
+
+void ReservationManager::CancelReservation() {
+
+}
+
+void ReservationManager::RestoreReservation() {
+    
+}
+
+void ReservationManager::ViewReservations() const {
+    ReservationManager::ViewReservations(this->head);
+}
+
 Node<Reservation>* ReservationManager::SearchReservations() const {
     int choice = 0;
     Node<Reservation>* node = nullptr;
+
+    Node<Reservation>* listHead = nullptr;
+    Node<Reservation>* listTail = nullptr;
     
-    cout << "Search via" << endl;
+    cout << "Search via\n";
     cout << "1. Resource ID\n";
     cout << "2. Reservation ID\n";
     cout << "3. Student ID\n";
@@ -122,23 +129,76 @@ Node<Reservation>* ReservationManager::SearchReservations() const {
         case 1: {
             string resId;
             
+            cout << "Enter Resource ID: ";
+            cin >> resId;
 
+            node = head;
+            while (node) {
+                if (node->value.GetResourceId() == resId) {
+                    ADD_LIST
+                }
+                node = node->next;
+            }
             break;
         }
         case 2: {
+            int id;
+
+            cout << "Enter Reservation ID: ";
+            cin >> id;
+
+            node = head;
+            while (node) {
+                if (node->value.GetId() == id) {
+                    ADD_LIST
+                }
+                node = node->next;
+            }
             break;
         }
-        case 3:
+        case 3: {
+            int studId;
+
+            cout << "Enter Student ID: ";
+            cin >> studId;
+
+            node = head;
+            while (node) {
+                if (node->value.GetStudentId() == studId) {
+                    ADD_LIST
+                }
+                node = node->next;
+            }
             break;
-        case 4:
+        }
+        case 4: {
+            string studName;
+
+            cout << "Enter Student Name: ";
+
+            // removes new line character from buffer if present
+            if (cin.peek() == '\n') {
+                cin.get();
+            }
+            getline(cin, studName);
+
+            node = head;
+            while (node) {
+                if (node->value.GetStudentName() == studName) {
+                    ADD_LIST
+                }
+                node = node->next;
+            }
             break;
+        }
         case 5:
             break;
         default:
+            cout << "Please enter a valid choice." << endl;
             break;
     }
 
-    return nullptr;
+    return listHead;
 }
 
 ReservationManager::~ReservationManager() {

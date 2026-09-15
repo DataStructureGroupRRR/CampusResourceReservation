@@ -109,9 +109,13 @@ int main() {
                 break;
             case 5:
                 break;
-            case 6:
+            case 6: {
                 reservMan.ViewReservations();
+
+                Node<Reservation>* searchHead = reservMan.SearchReservations();
+                ReservationManager::ViewReservations(searchHead);
                 break;
+            }
             case 7:
                 break;
             case 8:
@@ -119,7 +123,7 @@ int main() {
             case 9:
                 break;
             default:
-                // error message here
+                cout << "Please enter a valid choice." << endl;
                 break;
         }
     }

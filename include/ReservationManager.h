@@ -6,8 +6,22 @@
 #include "Reservation.h"
 #include "Node.h"
 
+#define ADD_LIST \
+Node<Reservation>* listNode = new Node<Reservation>(node->value);\
+if (listHead) {\
+    listTail->next = listNode;\
+    listNode->prev = listTail;\
+\
+    listTail = listNode;\
+} else {\
+    listHead = listNode;\
+    listTail = listNode;\
+}
+
 class ReservationManager {
     public:
+        static void ViewReservations(Node<Reservation>* begin);
+
         ReservationManager();
 
         void CreateReservation();
