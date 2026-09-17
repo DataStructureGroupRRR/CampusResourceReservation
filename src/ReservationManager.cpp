@@ -366,6 +366,10 @@ bool ReservationManager::SearchReservations(Node<Reservation>*& listHead) const 
     return true;
 }
 
+void ReservationManager::ViewWaitingLists() const {
+    
+}
+
 ReservationManager::~ReservationManager() {
     // destroy all nodes
 

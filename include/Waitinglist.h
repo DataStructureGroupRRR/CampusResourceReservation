@@ -21,8 +21,7 @@ struct WaitNode {
     WaitingStudent value;
     WaitNode* next;
 
-    WaitNode(const WaitingStudent& value) {
-        this->value = value;
+    WaitNode(const WaitingStudent& value) : value(value) {
         this->next = nullptr;
     }
 };
