@@ -8,6 +8,7 @@ set(SOURCE_FILES
     "src/Reservation.cpp"
     "src/ReservationManager.cpp"
     "src/Resource.cpp"
+    "src/WaitingList.cpp"
 )
 
 add_executable(${EXECUTABLE_NAME} ${SOURCE_FILES})

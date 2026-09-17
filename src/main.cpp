@@ -50,6 +50,8 @@ int main() {
                 reservMan.CancelReservation();
                 break;
             case 4:
+                // Waitlist:
+                reservMan.ViewWaitingLists();
                 break;
             case 5:
                 reservMan.RestoreReservation();

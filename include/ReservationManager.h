@@ -4,10 +4,13 @@
 #include <stack>
 #include <vector>
 #include <fstream>
+#include <map>
+#include <string>
 
 #include "Resource.h"
 #include "Reservation.h"
 #include "Node.h"
+#include "WaitingList.h"
 
 #define ADD_LIST \
 Node<Reservation>* listNode = new Node<Reservation>(node->value);\
@@ -34,8 +37,10 @@ class ReservationManager {
         void CancelReservation();
         void RestoreReservation();
         void ViewReservations() const;
-        bool SearchReservations(Node<Reservation>*& listHead) const;
+        bool SearchReservations(Node<Reservation>*& listHead) const;\
 
+        //
+        void ViewWaitingLists() const;
         ~ReservationManager();
     private:
         int highestId;
@@ -49,6 +54,12 @@ class ReservationManager {
         Node<Reservation>* tail;
 
         std::stack<Reservation> cancelledHistory;
+
+        std::map<std::string, WaitingList>waitingLists;
+
+        Resource* FindResource(const std::string& resID);
+
+        void MakeReservation(int studId, const std::string& studNAme, const std::string& resID);
 };
 
 #endif // RESERVATION_MAN_H

@@ -112,7 +112,42 @@ void ReservationManager::ViewResources() {
 
     cout << endl;
 }
+// WAITLIST: helper to get a mutable pointer to a resource by ID, since
+// 'resources' is a vector of values and existing loops used const refs.
+Resource* ReservationManager::FindResource(const string& resId) {
+    for (Resource& res : resources) {
+        if (res.GetId() == resId) {
+            return &res;
+        }
+    }
+    return nullptr;
+}
 
+// WAITLIST: factored out of CreateReservation() so CancelReservation() can
+// auto-create a reservation for the next waiting student using identical logic.
+void ReservationManager::MakeReservation(int studId, const string& studName, const string& resId) {
+    char date[11];
+
+    highestId++;
+
+    time_t timestamp = time(nullptr);
+    tm* dateTime = localtime(&timestamp);
+    strftime(date, 11, "%m/%d/%Y", dateTime);
+
+    Reservation r(highestId, studId, studName, resId, date);
+    Node<Reservation>* node = new Node<Reservation>(r);
+
+    if (head) {
+        tail->next = node;
+        node->prev = tail;
+
+        tail = node;
+    }
+    else {
+        head = node;
+        tail = node;
+    }
+}
 void ReservationManager::CreateReservation() {
     int studId;
     string studName;
