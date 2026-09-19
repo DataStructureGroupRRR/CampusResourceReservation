@@ -1,0 +1,12 @@
+1|Room101|ClassRoom|Available
+2|Room102|ClassRoom|Available
+3|Room205|LectureHall|Unavailable
+4|LabA1|ComputerLab|Available
+5|LabA2|ComputerLab|Unavailable
+6|Gym1|Gymnasium|Available
+7|StudyRoomB|StudyRoom|Available
+8|ConferenceHallC|ConferenceRoom|Unavailable
+9|AuditoriumMain|Auditorium|Available
+10|Projector01|Equipment|Available
+11|Projector02|Equipment|Unavailable
+12|Laptop01|Equipment|Available
