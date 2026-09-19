@@ -11,6 +11,7 @@
 #include "Reservation.h"
 #include "Node.h"
 #include "WaitingList.h"
+#include "CancellationHistory.h"
 
 #define ADD_LIST \
 Node<Reservation>* listNode = new Node<Reservation>(node->value);\
@@ -53,7 +54,7 @@ class ReservationManager {
         Node<Reservation>* head;
         Node<Reservation>* tail;
 
-        std::stack<Reservation> cancelledHistory;
+        CancellationHistory cancellationHistory;
 
         std::map<std::string, WaitingList>waitingLists;
 
