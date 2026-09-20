@@ -23,6 +23,7 @@ int main() {
     reservMan.ReadResources(resourceFile);
     resourceFile.close();
 
+    // main menu loop
     while (choice != 10) {
         cout << "===== Campus Resource Reservation System =====\n";
         cout << "1. View Resources\n";

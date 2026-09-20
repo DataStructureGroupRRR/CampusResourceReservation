@@ -6,6 +6,10 @@
 
 using namespace std;
 
+/**
+ * Displays the list of reservations.
+ * @param head The head of the reservation list.
+ */
 void ReservationManager::ViewReservations(Node<Reservation>* head) {
     int studLen = 0;
 
@@ -50,6 +54,9 @@ void ReservationManager::ViewReservations(Node<Reservation>* head) {
     cout << endl;
 }
 
+/**
+ * Constructs a new ReservationManager.
+ */
 ReservationManager::ReservationManager() {
     this->highestId = 0;
     this->longestName = 0;
@@ -59,6 +66,10 @@ ReservationManager::ReservationManager() {
     this->tail = nullptr;
 }
 
+/**
+ * Reads resources from a file and populates the resources vector.
+ * @param file The input file stream.
+ */
 void ReservationManager::ReadResources(ifstream& file) {
     string id;
     string name;
@@ -67,6 +78,7 @@ void ReservationManager::ReadResources(ifstream& file) {
 
     resources.clear();
 
+    // Read each line from the file and create Resource objects
     while (file.peek() != EOF && !file.eof()) {
         getline(file, id, '|');
         getline(file, name, '|');
@@ -87,8 +99,10 @@ void ReservationManager::ReadResources(ifstream& file) {
     }
 }
 
+/**
+ * Displays the list of resources.
+ */
 void ReservationManager::ViewResources() {
-    // adds padding to formatting
 
     int nameLen = max(longestName, 2) + 4;
     int typeLen = max(longestType, 4) + 4;
@@ -103,6 +117,8 @@ void ReservationManager::ViewResources() {
     cout << setfill('-') << setw(8 + nameLen + typeLen + 12) << "" << endl;
     
     cout << setfill(' ');
+    
+    // display each resource in the vector
     for (const Resource& res : resources) {
         cout << setw(8) << res.GetId();
         cout << setw(nameLen) << res.GetName();
@@ -112,8 +128,13 @@ void ReservationManager::ViewResources() {
 
     cout << endl;
 }
-// WAITLIST: helper to get a mutable pointer to a resource by ID, since
-// 'resources' is a vector of values and existing loops used const refs.
+
+/**
+ * Helper to get a mutable pointer to a resource by ID, since
+ * 'resources' is a vector of values and existing loops used const refs.
+ * @param resId The ID of the resource to find.
+ * @return A pointer to the resource if found, nullptr otherwise.
+ */
 Resource* ReservationManager::FindResource(const string& resId) {
     for (Resource& res : resources) {
         if (res.GetId() == resId) {
@@ -123,17 +144,23 @@ Resource* ReservationManager::FindResource(const string& resId) {
     return nullptr;
 }
 
-// WAITLIST: factored out of CreateReservation() so CancelReservation() can
-// auto-create a reservation for the next waiting student using identical logic.
+/**
+ * Creates a new reservation for a student and resource.
+ * @param studId The student's ID.
+ * @param studName The student's name.
+ * @param resId The resource ID.
+ */
 void ReservationManager::MakeReservation(int studId, const string& studName, const string& resId) {
     char date[11];
 
     highestId++;
 
+    // Get the current date in MM/DD/YYYY format
     time_t timestamp = time(nullptr);
     tm* dateTime = localtime(&timestamp);
     strftime(date, 11, "%m/%d/%Y", dateTime);
 
+    // Create a new reservation and add it to the linked list
     Reservation r(highestId, studId, studName, resId, date);
     Node<Reservation>* node = new Node<Reservation>(r);
 
@@ -148,6 +175,10 @@ void ReservationManager::MakeReservation(int studId, const string& studName, con
         tail = node;
     }
 }
+
+/**
+ * Creates a new reservation for a student and resource, or adds the student to the waiting list if the resource is unavailable.
+ */
 void ReservationManager::CreateReservation() {
     int studId;
     string studName;
@@ -162,7 +193,7 @@ void ReservationManager::CreateReservation() {
     cout << "Resource ID: ";
     cin >> resId;
 
-    //using FindResource() helper (previously unused)
+    //using FindResource() helper
     Resource* res = FindResource(resId);
 
     if (!res) {
@@ -179,9 +210,10 @@ void ReservationManager::CreateReservation() {
     tm* dateTime = localtime(&timestamp);
     strftime(date, 11, "%m/%d/%Y", dateTime);
 
+    // Check if the resource is already booked on the current date
     if (IsResourceBookedOnDate(resId, date)){
         waitingLists[resId].AddStudent(studId, studName, date);
-        cout << "Resource " << resId << " is already booked for " << date << studName<< " have been added to the waiting list.\n\n" << flush;
+        cout << "Resource " << resId << " is already booked for " << date <<". "<< studName<< " have been added to the waiting list.\n\n" << flush;
     }else{
         MakeReservation(studId, studName, resId);
         cout << "Reservation created!\n";
@@ -191,7 +223,9 @@ void ReservationManager::CreateReservation() {
     }
 }
 
-
+/**
+ * Cancels a reservation and assigns the resource to the next student in the waiting list if applicable.
+ */
 void ReservationManager::CancelReservation() {
     string resId = cancellationHistory.CancelReservation(head, tail);
 
@@ -215,18 +249,32 @@ void ReservationManager::CancelReservation() {
 
 }
 
+/**
+ * Displays the cancellation history.
+ */
 void ReservationManager::ViewCancellationHistory() const {
     cancellationHistory.DisplayHistory();
 }
 
+/**
+ * Restores a reservation from the cancellation history.
+ */
 void ReservationManager::RestoreReservation() {
     cancellationHistory.RestoreReservation(head, tail);
 }
 
+/**
+ * Displays the list of reservations.
+ */
 void ReservationManager::ViewReservations() const {
     ReservationManager::ViewReservations(this->head);
 }
 
+/**
+ * Searches for reservations based on user input and populates a list of matching reservations.
+ * @param listHead A reference to the head of the list to populate with matching reservations.
+ * @return True if the search was successful, false if the user chose to cancel.
+ */
 bool ReservationManager::SearchReservations(Node<Reservation>*& listHead) const {
     int choice = 0;
     Node<Reservation>* node = nullptr;
@@ -323,6 +371,9 @@ bool ReservationManager::SearchReservations(Node<Reservation>*& listHead) const 
     return true;
 }
 
+/**
+ * Displays the waiting lists for all resources.
+ */
 void ReservationManager::ViewWaitingLists() const {
     if (waitingLists.empty()) {
         cout << "No waiting lists available.\n\n" << flush;
@@ -342,7 +393,12 @@ void ReservationManager::ViewWaitingLists() const {
         }
     }
     
-//
+/**
+ * Checks if a resource is booked on a specific date.
+ * @param resID The ID of the resource to check.
+ * @param date The date to check in MM/DD/YYYY format.
+ * @return True if the resource is booked on the given date, false otherwise.
+ */
 bool ReservationManager::IsResourceBookedOnDate(const std::string& resID, const std::string& date) const {
     Node<Reservation>* node = head;
     while (node) {

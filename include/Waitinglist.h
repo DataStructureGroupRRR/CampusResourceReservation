@@ -16,7 +16,9 @@ struct WaitingStudent {
     }
 };
 
-// Internal linked-list node for the queue.
+/**
+ * Internal linked-list node for the queue.
+ */
 struct WaitNode {
     WaitingStudent value;
     WaitNode* next;
@@ -26,8 +28,9 @@ struct WaitNode {
     }
 };
 
-// A FIFO waiting list implemented as a singly linked list with
-// front and rear pointers, giving O(1) enqueue and O(1) dequeue.
+/**
+ * A queue of students waiting for a resource to become available.
+ */
 class WaitingList {
 private:
     WaitNode* head;
