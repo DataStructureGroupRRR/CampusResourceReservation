@@ -76,3 +76,24 @@ void CancellationHistory::RestoreReservation(Node<Reservation>*& head, Node<Rese
 
     cout << "Reservation Restored Successfully.\n\n" << flush;
 }
+//displays cancellation history.
+void CancellationHistory::DisplayHistory() const {
+        if (cancelledHistory.empty()) {
+            cout << "No cancellations in history.\n\n" << flush;
+            return;
+        }
+
+        std::stack<Reservation> temp = cancelledHistory; // create a copy to display
+
+        cout << "Cancellation History:\n";
+        while (!temp.empty()) {
+            const Reservation& r = temp.top();
+            cout << "ID: " << r.GetId() 
+                 << ", Student ID: " << r.GetStudentId() 
+                 << ", Student Name: " << r.GetStudentName() 
+                 << ", Resource ID: " << r.GetResourceId() 
+                 << ", Date: " << r.GetDate() << endl;
+            temp.pop();
+        }
+        cout << endl;
+    }

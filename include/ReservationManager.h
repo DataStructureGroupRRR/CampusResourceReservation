@@ -38,10 +38,9 @@ class ReservationManager {
         void CancelReservation();
         void RestoreReservation();
         void ViewReservations() const;
-        bool SearchReservations(Node<Reservation>*& listHead) const;\
-
-        //
+        bool SearchReservations(Node<Reservation>*& listHead) const;
         void ViewWaitingLists() const;
+        void ViewCancellationHistory() const;
         ~ReservationManager();
     private:
         int highestId;
@@ -61,6 +60,10 @@ class ReservationManager {
         Resource* FindResource(const std::string& resID);
 
         void MakeReservation(int studId, const std::string& studNAme, const std::string& resID);
+
+        bool IsResourceBookedOnDate(const std::string& resID, const std::string& date) const;
+
+        
 };
 
 #endif // RESERVATION_MAN_H

@@ -23,7 +23,7 @@ int main() {
     reservMan.ReadResources(resourceFile);
     resourceFile.close();
 
-    while (choice != 9) {
+    while (choice != 10) {
         cout << "===== Campus Resource Reservation System =====\n";
         cout << "1. View Resources\n";
         cout << "2. Create Reservation\n";
@@ -33,7 +33,8 @@ int main() {
         cout << "6. Search Reservations\n";
         cout << "7. Sort Resources\n";
         cout << "8. Generate Report\n";
-        cout << "9. Exit\n\n" << flush;
+        cout << "9. View Cancellation History\n";
+        cout << "10. Exit\n\n" << flush;
 
         cout << "Enter Choice: ";
         cin >> choice;
@@ -77,6 +78,10 @@ int main() {
             case 8:
                 break;
             case 9:
+                reservMan.ViewCancellationHistory();
+                break;
+            case 10:
+                cout << "Exiting the program. Goodbye!" << endl;
                 break;
             default:
                 cout << "Please enter a valid choice." << endl;
