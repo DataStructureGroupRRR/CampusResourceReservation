@@ -2,13 +2,14 @@
 #define CANCELLATION_HISTORY_H
 
 #include <stack>
-
+#include <string>
 #include "Reservation.h"
 #include "Node.h"
 
 class CancellationHistory {
     public:
-        void CancelReservation(Node<Reservation>*& head, Node<Reservation>*& tail);
+        //Returns the reservation that was cancelled and removes it from the history stack
+        std::string CancelReservation(Node<Reservation>*& head, Node<Reservation>*& tail);
         void RestoreReservation(Node<Reservation>*& head, Node<Reservation>*& tail);
     private:
         std::stack<Reservation> cancelledHistory;

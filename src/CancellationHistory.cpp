@@ -4,7 +4,8 @@
 
 using namespace std;
 
-void CancellationHistory::CancelReservation(Node<Reservation>*& head, Node<Reservation>*& tail) {
+// returns the cancelled reservation's resource ID 
+std::string CancellationHistory::CancelReservation(Node<Reservation>*& head, Node<Reservation>*& tail) {
     int id;
 
     cout << "Reservation ID: ";
@@ -22,8 +23,11 @@ void CancellationHistory::CancelReservation(Node<Reservation>*& head, Node<Reser
 
     if (!node) {
         cout << "No reservation found with ID " << id << ".\n\n" << flush;
-        return;
+        return ""; 
     }
+
+    //capture the resource ID of the cancelled reservation before deleting it
+    string resID = node->value.GetResourceId();
 
     // unlink node from the doubly linked list
     if (node->prev) {
@@ -44,6 +48,8 @@ void CancellationHistory::CancelReservation(Node<Reservation>*& head, Node<Reser
 
     cout << "Reservation Cancelled.\n";
     cout << "Added to cancellation history.\n\n" << flush;
+
+    return resID; // return the resource ID of the cancelled reservation
 }
 
 void CancellationHistory::RestoreReservation(Node<Reservation>*& head, Node<Reservation>*& tail) {

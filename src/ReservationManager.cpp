@@ -152,9 +152,6 @@ void ReservationManager::CreateReservation() {
     int studId;
     string studName;
     string resId;
-
-    bool foundRes = false;
-    char date[11];
     
     cout << "Student ID: ";
     cin >> studId;
@@ -165,42 +162,48 @@ void ReservationManager::CreateReservation() {
     cout << "Resource ID: ";
     cin >> resId;
 
-    for (const Resource& res : resources) {
-        if (resId == res.GetId()) {
-            foundRes = true;
-            break;
-        }
-    }
+    //using FindResource() helper (previously unused)
+    Resource* res = FindResource(resId);
 
-    if (!foundRes) {
-        cout << "No reservation with ID " << resId << " was found.\n\n" << flush;
+    if (!res) {
+        cout << "No resource with ID " << resId << " was found.\n\n" << flush;
         return;
     }
+    if (res -> IsAvailable()){
+        res->SetAvailable(false);
 
-    highestId++;
-
-    time_t timestamp = time(nullptr);
-    tm* dateTime = localtime(&timestamp);
-    strftime(date, 11, "%m/%d/%Y", dateTime);
-
-    Reservation r(highestId, studId, studName, resId, date);
-    Node<Reservation>* node = new Node<Reservation>(r);
-
-    if (head) {
-        tail->next = node;
-        node->prev = tail;
-
-        tail = node;
-    } else {
-        head = node;
-        tail = node;
+        MakeReservation(studId, studName, resId);
+        cout<< "Reservation Created Successfully.\n\n" << flush;
+    }else{
+        waitingLists[resId].AddStudent(studId, studName, resId);
+        cout<<"Resource "<<resId<<" is currently unavailable. "<<studName<<" has been added to the waiting list.\n\n"<<flush;
     }
-
-    cout << "Reservation Created Successfully.\n\n" << flush;
 }
 
+
 void ReservationManager::CancelReservation() {
-    cancellationHistory.CancelReservation(head, tail);
+    string resId = cancellationHistory.CancelReservation(head, tail);
+
+    if (resId.empty()) {
+        return; // no reservation was cancelled
+    }
+
+    auto it = waitingLists.find(resId);
+    if (it != waitingLists.end() && !it->second.IsEmpty()) {
+        WaitingStudent nextStudent (0,"","");
+        it->second.RemoveStudent(nextStudent); //dequeue the front
+
+         // Resource it's handed directly to the next student
+        MakeReservation(nextStudent.studId , nextStudent.studName, resId);
+
+        cout<<"Resource "<<resId<<" has been assigned to the next student in the waiting list: "<<nextStudent.studName<<" (Student ID: "<<nextStudent.studId<<").\n\n"<<flush;
+    }else{
+        //If nobody is waiting: restore availability
+        Resource* res = FindResource(resId);
+        if (res) {
+            res->SetAvailable(true);
+        }
+    }
 }
 
 void ReservationManager::RestoreReservation() {
@@ -308,8 +311,25 @@ bool ReservationManager::SearchReservations(Node<Reservation>*& listHead) const 
 }
 
 void ReservationManager::ViewWaitingLists() const {
+    if (waitingLists.empty()) {
+        cout << "No waiting lists available.\n\n" << flush;
+        return;
+    }
+
+    bool anyNonEmpty = false;
+    for (const auto& pair : waitingLists) {
+        if (!pair.second.IsEmpty()) {
+            anyNonEmpty = true;
+            cout << "Waiting List for Resource ID " << pair.first << ":\n";
+            pair.second.Display();
+        }
+    }
+    if (!anyNonEmpty) {
+        cout<<"All waiting lists are empty.\n\n"<<flush;
+        }
+    }
     
-}
+
 
 ReservationManager::~ReservationManager() {
     // destroy all nodes

@@ -22,6 +22,7 @@ WaitingList::~WaitingList() {
     }
 }
 
+//Function to add a student to the waiting list
 void WaitingList::AddStudent(int studId, const string& studName, const string& resId) {
     WaitingStudent newStudent(studId, studName, resId);
     WaitNode* node = new WaitNode(newStudent);
@@ -38,6 +39,7 @@ void WaitingList::AddStudent(int studId, const string& studName, const string& r
     count++;
 }
 
+//Function to remove a student from the waiting list
 bool WaitingList::RemoveStudent(WaitingStudent& outStudent) {
     if (!head) {
         return false;
@@ -56,6 +58,7 @@ bool WaitingList::RemoveStudent(WaitingStudent& outStudent) {
     return true;
 }
 
+//fucntion to see the waiting list for a specific resource.
 void WaitingList::Display() const {
     if (!head) {
         cout << "Waiting list is empty.\n\n" << flush;
