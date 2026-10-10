@@ -44,6 +44,7 @@ public:
     // Adds a student to the back of the waiting list. O(1).
     void AddStudent(int studId, const std::string& studName, const std::string& resId);
 
+   
     // Removes and returns the student at the front of the list.
     // Returns false if the list was empty (outStudent left unset).
     bool RemoveStudent(WaitingStudent& outStudent);

@@ -75,6 +75,7 @@ int main() {
                 break;
             }
             case 7:
+                reservMan.SortResourcesByName();
                 break;
             case 8:
                 break;

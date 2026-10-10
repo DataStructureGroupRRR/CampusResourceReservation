@@ -410,6 +410,78 @@ bool ReservationManager::IsResourceBookedOnDate(const std::string& resID, const 
     return false; // resource is not booked on the given date
 }
 
+/**
+    * Merges two sorted subarrays of resources by name.
+    * @param vec The vector of resources to merge.
+    * @param left The starting index of the first subarray. 
+    * @param mid The ending index of the first subarray.    
+    * @param right The ending index of the second subarray.
+*/
+ void ReservationManager :: MergeByName(vector<Resource>& vec, int left, int mid, int right) {
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+
+    vector<Resource> L(vec.begin() + left, vec.begin() + mid + 1);
+    vector<Resource> R(vec.begin() + mid + 1, vec.begin() + right + 1);
+
+    int i = 0;
+    int j = 0;
+    int k = left;
+
+    while (i < n1 && j < n2) {
+        if (L[i].GetName() <= R[j].GetName()) {
+            vec[k] = L[i];
+            i++;
+        } else {
+            vec[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < n1) {
+        vec[k] = L[i];
+        i++;
+        k++;
+    }
+
+    while (j < n2) {
+        vec[k] = R[j];
+        j++;
+        k++;
+    }
+/**
+ * Sorts a vector of resources by name using merge sort.
+ * @param vec The vector of resources to sort.
+ * @param left The starting index of the subarray to sort.
+ * @param right The ending index of the subarray to sort.
+ */
+void  ReservationManager::MergeSortByName(vector<Resource>& vec, int left, int right) {
+    if (left >= right) {
+        return;
+    }
+    int mid = left + (right - left) / 2;
+
+        MergeSortByName(vec, left, mid);
+        MergeSortByName(vec, mid + 1, right);
+
+        MergeByName(vec, left, mid, right);
+    }
+/**
+ * Sorts all resources by name.
+ 
+ */
+void ReservationManager::SortResourcesByName() {
+    if (resources.empty()) {
+        cout << "No resources to sort.\n\n" << flush;
+        return;
+    }
+    MergeSortByName(resources, 0, resources.size() - 1);
+    cout << "Resources sorted by name successfully.\n\n" << flush;
+    viewResources();
+}
+
+
 
 ReservationManager::~ReservationManager() {
     // destroy all nodes

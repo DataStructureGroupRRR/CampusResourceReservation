@@ -41,6 +41,13 @@ class ReservationManager {
         bool SearchReservations(Node<Reservation>*& listHead) const;
         void ViewWaitingLists() const;
         void ViewCancellationHistory() const;
+
+        //Milestone 2: sorts 'resources' alphabetically by name using merge sort
+        void SortResourcesByName();
+
+        //Prints active reservations, resource utilization, most requested resource
+        // and waiting list statistics
+        void GenerateReport() const;
         ~ReservationManager();
     private:
         int highestId;
@@ -63,6 +70,14 @@ class ReservationManager {
 
         bool IsResourceBookedOnDate(const std::string& resID, const std::string& date) const;
 
+        //Sorting(merger sort)
+        void MergeSortByName(std::vector<Resource>& vec, int left, int right);
+        void MeergeByName(std::vector<Resource>& vec, int left, int mid, int right);
+
+        //Searching (binary search)
+        void MergeSortById(std::vector<Resource>& vec, int left, int right)const;
+        void MergeById(std::vector<Resource>& vec, int left, int mid, int right)const;
+        int BinarySearchById(const std::vector<Resource>& sortedById, const std::string& resID)const;
         
 };
 
