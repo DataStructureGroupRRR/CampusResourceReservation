@@ -569,3 +569,126 @@ ReservationManager::~ReservationManager() {
 
     DELETE_LL(node, nextNode)
 }
+
+/**
+ * Merges two sorted subarrays of resources by ID (string comparison).
+ * @param vec The vector of resources to merge.
+ * @param left The starting index of the first subarray.
+ * @param mid The ending index of the first subarray.
+ * @param right The ending index of the second subarray.
+ */
+void ReservationManager::MergeById(vector<Resource>& vec, int left, int mid, int right) const {
+    vector<Resource> L(vec.begin() + left, vec.begin() + mid + 1);
+    vector<Resource> R(vec.begin() + mid + 1, vec.begin() + right + 1);
+
+    int n1 = L.size();
+    int n2 = R.size();
+    int i = 0;
+    int j = 0;
+    int k = left;
+
+    while (i < n1 && j < n2) {
+        if (L[i].GetId() <= R[j].GetId()) {
+            vec[k] = L[i];
+            i++;
+        } else {
+            vec[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < n1) {
+        vec[k] = L[i];
+        i++;
+        k++;
+    }
+
+    while (j < n2) {
+        vec[k] = R[j];
+        j++;
+        k++;
+    }
+}
+
+/**
+ * Sorts a vector of resources by ID using merge sort.
+ * Used to prepare the data before binary search.
+ * @param vec The vector of resources to sort.
+ * @param left The starting index of the subarray to sort.
+ * @param right The ending index of the subarray to sort.
+ */
+void ReservationManager::MergeSortById(vector<Resource>& vec, int left, int right) const {
+    if (left >= right) {
+        return;
+    }
+
+    int mid = left + (right - left) / 2;
+
+    MergeSortById(vec, left, mid);
+    MergeSortById(vec, mid + 1, right);
+    MergeById(vec, left, mid, right);
+}
+
+/**
+ * Binary search for a resource by ID. The vector MUST already be sorted by ID.
+ * @param sortedById Resources sorted by ID with the same comparison used in MergeById.
+ * @param resID The resource ID to look for.
+ * @return The index of the resource if found, -1 otherwise.
+ */
+int ReservationManager::BinarySearchById(const vector<Resource>& sortedById, const string& resID) const {
+    int low = 0;
+    int high = (int)sortedById.size() - 1;
+
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        const string midId = sortedById[mid].GetId();
+
+        if (midId == resID) {
+            return mid;
+        }
+        else if (midId < resID) {
+            low = mid + 1;
+        }
+        else {
+            high = mid - 1;
+        }
+    }
+
+    return -1; // not found
+}
+
+/**
+ * Prompts for a resource ID and looks it up with binary search.
+ * A sorted COPY of the resources is made first, so the original order
+ * (e.g. a name sort done by another feature) is never disturbed.
+ */
+void ReservationManager::SearchResourceById() const {
+    if (resources.empty()) {
+        cout << "No resources to search.\n\n" << flush;
+        return;
+    }
+
+    string resId;
+    cout << "Enter Resource ID: ";
+    cin >> resId;
+
+    // binary search requires sorted data, so sort a copy by ID first
+    vector<Resource> sortedById = resources;
+    MergeSortById(sortedById, 0, (int)sortedById.size() - 1);
+
+    int index = BinarySearchById(sortedById, resId);
+
+    if (index == -1) {
+        cout << "No resource with ID " << resId << " was found.\n\n" << flush;
+        return;
+    }
+
+    const Resource& res = sortedById[index];
+
+    cout << "\nResource Found:\n";
+    cout << "ID:           " << res.GetId() << "\n";
+    cout << "Name:         " << res.GetName() << "\n";
+    cout << "Type:         " << res.GetType() << "\n";
+    cout << "Availability: " << (res.IsAvailable() ? "Available" : "Unavailable") << "\n\n" << flush;
+}

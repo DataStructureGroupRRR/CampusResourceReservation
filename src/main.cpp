@@ -35,7 +35,8 @@ int main() {
         cout << "7. Sort Resources\n";
         cout << "8. Generate Report\n";
         cout << "9. View Cancellation History\n";
-        cout << "10. Exit\n\n" << flush;
+        cout << "10. Exit\n";
+        cout << "11. Search Resource by ID\n\n" << flush;
 
         cout << "Enter Choice: ";
         cin >> choice;
@@ -82,6 +83,9 @@ int main() {
                 break;
             case 9:
                 reservMan.ViewCancellationHistory();
+                break;
+            case 11:
+                reservMan.SearchResourceById();
                 break;
             case 10:
                 cout << "Exiting the program. Goodbye!" << endl;

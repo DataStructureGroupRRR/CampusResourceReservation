@@ -34,6 +34,9 @@ class ReservationManager {
         void ReadResources(std::ifstream& file);
         void ViewResources();
 
+        //Searches for a resource by ID using binary search (on a sorted copy)
+        void SearchResourceById() const;
+
         void CreateReservation();
         void CancelReservation();
         void RestoreReservation();
