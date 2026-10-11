@@ -450,6 +450,7 @@ bool ReservationManager::IsResourceBookedOnDate(const std::string& resID, const 
         j++;
         k++;
     }
+}
 /**
  * Sorts a vector of resources by name using merge sort.
  * @param vec The vector of resources to sort.
@@ -478,9 +479,86 @@ void ReservationManager::SortResourcesByName() {
     }
     MergeSortByName(resources, 0, resources.size() - 1);
     cout << "Resources sorted by name successfully.\n\n" << flush;
-    viewResources();
+    ViewResources();
 }
 
+// Reporting
+void ReservationManager :: GenerateReport() const{
+     cout << "Reservation Report:\n\n";
+
+     // Active reservations
+     cout << "Active Reservations:\n";
+     if (!head) {
+         cout << "No active reservations.\n\n";
+     } else {
+         ReservationManager::ViewReservations(head);
+     }
+
+     // Resource Utilization
+        cout << "Resource Utilization:\n";
+        map<string, int> utilization;
+        Node<Reservation>* node = head;
+        while (node) {
+            utilization[node->value.GetResourceId()]++;
+            node = node->next;
+        }
+
+        if (utilization.empty()) {
+            cout << "No resource utilization data available.\n\n";
+        } else {
+            cout << setfill(' ') << left;
+            cout << setw(12) << "Resource ID" << setw(20) << "Reservations Count" << endl;
+            cout<< setfill('-') << setw(32) << "" << endl;
+            cout << setfill(' ');
+            for (const auto& pair : utilization) {
+                cout << setw(12) << pair.first << setw(20) << pair.second << endl;
+            }
+            cout << endl;
+        }
+
+        //Most popular resources
+        cout << "Most Popular Resources:\n";
+        if (utilization.empty()) {
+            cout << "No data available to determine most popular resources.\n\n";
+        } else {
+            int maxCount = 0;
+            for (const auto& pair : utilization) {
+                if (pair.second > maxCount) {
+                    maxCount = pair.second;
+                }
+            }
+
+            cout << "Most Popular Resource(s):\n";
+            for (const auto& pair : utilization) {
+                if (pair.second == maxCount) {
+                    cout << "Resource ID: " << pair.first << ", Reservations Count: " << pair.second << endl;
+                }
+            }
+            cout << endl;
+        }
+
+    // Waiting lists Statistics
+    cout << "Waiting Lists Statistics:\n";
+    if (waitingLists.empty()) {
+        cout << "No waiting lists available.\n\n";
+    } else {
+        bool anyWaiting = false;
+        cout << setfill(' ') << left;
+        cout << setw(12) << "Resource ID" << setw(20) << "Waiting Students Count" << endl;
+        cout << setfill('-') << setw(32) << "" << endl;
+        cout << setfill(' ');
+        for (const auto& pair : waitingLists) {
+            if (!pair.second.IsEmpty()) {
+                anyWaiting = true;
+                cout << setw(12) << pair.first << setw(20) << pair.second.Size() << endl;
+            }
+        }
+        if (!anyWaiting) {
+            cout << "No students are currently waiting for any resources.\n\n";
+        }
+        cout << endl;
+    }
+}
 
 
 ReservationManager::~ReservationManager() {

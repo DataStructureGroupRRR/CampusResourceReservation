@@ -72,7 +72,7 @@ class ReservationManager {
 
         //Sorting(merger sort)
         void MergeSortByName(std::vector<Resource>& vec, int left, int right);
-        void MeergeByName(std::vector<Resource>& vec, int left, int mid, int right);
+        void MergeByName(std::vector<Resource>& vec, int left, int mid, int right);
 
         //Searching (binary search)
         void MergeSortById(std::vector<Resource>& vec, int left, int right)const;

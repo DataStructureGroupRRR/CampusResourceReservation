@@ -78,6 +78,7 @@ int main() {
                 reservMan.SortResourcesByName();
                 break;
             case 8:
+                reservMan.GenerateReport();
                 break;
             case 9:
                 reservMan.ViewCancellationHistory();
