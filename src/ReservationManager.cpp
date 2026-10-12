@@ -441,6 +441,160 @@ bool ReservationManager::IsResourceBookedOnDate(const std::string& resID, const 
     return false; // resource is not booked on the given date
 }
 
+/**
+    * Merges two sorted subarrays of resources by name.
+    * @param vec The vector of resources to merge.
+    * @param left The starting index of the first subarray. 
+    * @param mid The ending index of the first subarray.    
+    * @param right The ending index of the second subarray.
+*/
+ void ReservationManager :: MergeByName(vector<Resource>& vec, int left, int mid, int right) {
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+
+    vector<Resource> L(vec.begin() + left, vec.begin() + mid + 1);
+    vector<Resource> R(vec.begin() + mid + 1, vec.begin() + right + 1);
+
+    int i = 0;
+    int j = 0;
+    int k = left;
+
+    while (i < n1 && j < n2) {
+        if (L[i].GetName() <= R[j].GetName()) {
+            vec[k] = L[i];
+            i++;
+        } else {
+            vec[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < n1) {
+        vec[k] = L[i];
+        i++;
+        k++;
+    }
+
+    while (j < n2) {
+        vec[k] = R[j];
+        j++;
+        k++;
+    }
+}
+/**
+ * Sorts a vector of resources by name using merge sort.
+ * @param vec The vector of resources to sort.
+ * @param left The starting index of the subarray to sort.
+ * @param right The ending index of the subarray to sort.
+ */
+void  ReservationManager::MergeSortByName(vector<Resource>& vec, int left, int right) {
+    if (left >= right) {
+        return;
+    }
+    int mid = left + (right - left) / 2;
+
+        MergeSortByName(vec, left, mid);
+        MergeSortByName(vec, mid + 1, right);
+
+        MergeByName(vec, left, mid, right);
+    }
+/**
+ * Sorts all resources by name.
+ 
+ */
+void ReservationManager::SortResourcesByName() {
+    if (resources.empty()) {
+        cout << "No resources to sort.\n\n" << flush;
+        return;
+    }
+    MergeSortByName(resources, 0, resources.size() - 1);
+    cout << "Resources sorted by name successfully.\n\n" << flush;
+    ViewResources();
+}
+
+// Reporting
+void ReservationManager :: GenerateReport() const{
+     cout << "Reservation Report:\n\n";
+
+     // Active reservations
+     cout << "Active Reservations:\n";
+     if (!head) {
+         cout << "No active reservations.\n\n";
+     } else {
+         ReservationManager::ViewReservations(head);
+     }
+
+     // Resource Utilization
+        cout << "Resource Utilization:\n";
+        map<string, int> utilization;
+        Node<Reservation>* node = head;
+        while (node) {
+            utilization[node->value.GetResourceId()]++;
+            node = node->next;
+        }
+
+        if (utilization.empty()) {
+            cout << "No resource utilization data available.\n\n";
+        } else {
+            cout << setfill(' ') << left;
+            cout << setw(12) << "Resource ID" << setw(20) << "Reservations Count" << endl;
+            cout<< setfill('-') << setw(32) << "" << endl;
+            cout << setfill(' ');
+            for (const auto& pair : utilization) {
+                cout << setw(12) << pair.first << setw(20) << pair.second << endl;
+            }
+            cout << endl;
+        }
+
+        //Most popular resources
+        cout << "Most Popular Resources:\n";
+        map<string, int>demand = utilization;
+        for (const auto& pair : waitingLists) {
+            demand[pair.first] += pair.second.Size();
+        }
+        if (demand.empty()) {
+            cout << "No data available to determine most popular resources.\n\n";
+        } else {
+            int maxCount = 0;
+            for (const auto& pair : demand) {
+                if (pair.second > maxCount) {
+                    maxCount = pair.second;
+                }
+            }
+
+            cout << "Most Popular Resource(s):\n";
+            for (const auto& pair : demand) {
+                if (pair.second == maxCount) {
+                    cout << "Resource ID: " << pair.first << ", Reservations Count: " << pair.second << endl;
+                }
+            }
+            cout << endl;
+        }
+
+    // Waiting lists Statistics
+    cout << "Waiting Lists Statistics:\n";
+    if (waitingLists.empty()) {
+        cout << "No waiting lists available.\n\n";
+    } else {
+        bool anyWaiting = false;
+        cout << setfill(' ') << left;
+        cout << setw(12) << "Resource ID" << setw(20) << "Waiting Students Count" << endl;
+        cout << setfill('-') << setw(32) << "" << endl;
+        cout << setfill(' ');
+        for (const auto& pair : waitingLists) {
+            if (!pair.second.IsEmpty()) {
+                anyWaiting = true;
+                cout << setw(12) << pair.first << setw(20) << pair.second.Size() << endl;
+            }
+        }
+        if (!anyWaiting) {
+            cout << "No students are currently waiting for any resources.\n\n";
+        }
+        cout << endl;
+    }
+}
+
 
 ReservationManager::~ReservationManager() {
     // destroy all nodes
@@ -449,4 +603,127 @@ ReservationManager::~ReservationManager() {
     Node<Reservation>* nextNode = nullptr;
 
     DELETE_LL(node, nextNode)
+}
+
+/**
+ * Merges two sorted subarrays of resources by ID (string comparison).
+ * @param vec The vector of resources to merge.
+ * @param left The starting index of the first subarray.
+ * @param mid The ending index of the first subarray.
+ * @param right The ending index of the second subarray.
+ */
+void ReservationManager::MergeById(vector<Resource>& vec, int left, int mid, int right) const {
+    vector<Resource> L(vec.begin() + left, vec.begin() + mid + 1);
+    vector<Resource> R(vec.begin() + mid + 1, vec.begin() + right + 1);
+
+    int n1 = L.size();
+    int n2 = R.size();
+    int i = 0;
+    int j = 0;
+    int k = left;
+
+    while (i < n1 && j < n2) {
+        if (L[i].GetId() <= R[j].GetId()) {
+            vec[k] = L[i];
+            i++;
+        } else {
+            vec[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < n1) {
+        vec[k] = L[i];
+        i++;
+        k++;
+    }
+
+    while (j < n2) {
+        vec[k] = R[j];
+        j++;
+        k++;
+    }
+}
+
+/**
+ * Sorts a vector of resources by ID using merge sort.
+ * Used to prepare the data before binary search.
+ * @param vec The vector of resources to sort.
+ * @param left The starting index of the subarray to sort.
+ * @param right The ending index of the subarray to sort.
+ */
+void ReservationManager::MergeSortById(vector<Resource>& vec, int left, int right) const {
+    if (left >= right) {
+        return;
+    }
+
+    int mid = left + (right - left) / 2;
+
+    MergeSortById(vec, left, mid);
+    MergeSortById(vec, mid + 1, right);
+    MergeById(vec, left, mid, right);
+}
+
+/**
+ * Binary search for a resource by ID. The vector MUST already be sorted by ID.
+ * @param sortedById Resources sorted by ID with the same comparison used in MergeById.
+ * @param resID The resource ID to look for.
+ * @return The index of the resource if found, -1 otherwise.
+ */
+int ReservationManager::BinarySearchById(const vector<Resource>& sortedById, const string& resID) const {
+    int low = 0;
+    int high = (int)sortedById.size() - 1;
+
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        const string midId = sortedById[mid].GetId();
+
+        if (midId == resID) {
+            return mid;
+        }
+        else if (midId < resID) {
+            low = mid + 1;
+        }
+        else {
+            high = mid - 1;
+        }
+    }
+
+    return -1; // not found
+}
+
+/**
+ * Prompts for a resource ID and looks it up with binary search.
+ * A sorted COPY of the resources is made first, so the original order
+ * (e.g. a name sort done by another feature) is never disturbed.
+ */
+void ReservationManager::SearchResourceById() const {
+    if (resources.empty()) {
+        cout << "No resources to search.\n\n" << flush;
+        return;
+    }
+
+    string resId;
+    cout << "Enter Resource ID: ";
+    cin >> resId;
+
+    // binary search requires sorted data, so sort a copy by ID first
+    vector<Resource> sortedById = resources;
+    MergeSortById(sortedById, 0, (int)sortedById.size() - 1);
+
+    int index = BinarySearchById(sortedById, resId);
+
+    if (index == -1) {
+        cout << "No resource with ID " << resId << " was found.\n\n" << flush;
+        return;
+    }
+
+    const Resource& res = sortedById[index];
+
+    cout << "\nResource Found:\n";
+    cout << "ID:           " << res.GetId() << "\n";
+    cout << "Name:         " << res.GetName() << "\n";
+    cout << "Type:         " << res.GetType() << "\n";
+    cout << "Availability: " << (res.IsAvailable() ? "Available" : "Unavailable") << "\n\n" << flush;
 }
