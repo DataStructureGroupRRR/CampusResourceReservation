@@ -518,18 +518,22 @@ void ReservationManager :: GenerateReport() const{
 
         //Most popular resources
         cout << "Most Popular Resources:\n";
-        if (utilization.empty()) {
+        map<string, int>demand = utilization;
+        for (const auto& pair : waitingLists) {
+            demand[pair.first] += pair.second.Size();
+        }
+        if (demand.empty()) {
             cout << "No data available to determine most popular resources.\n\n";
         } else {
             int maxCount = 0;
-            for (const auto& pair : utilization) {
+            for (const auto& pair : demand) {
                 if (pair.second > maxCount) {
                     maxCount = pair.second;
                 }
             }
 
             cout << "Most Popular Resource(s):\n";
-            for (const auto& pair : utilization) {
+            for (const auto& pair : demand) {
                 if (pair.second == maxCount) {
                     cout << "Resource ID: " << pair.first << ", Reservations Count: " << pair.second << endl;
                 }
