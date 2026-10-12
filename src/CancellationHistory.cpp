@@ -5,7 +5,7 @@
 using namespace std;
 
 // returns the cancelled reservation's resource ID 
-std::string CancellationHistory::CancelReservation(Node<Reservation>*& head, Node<Reservation>*& tail) {
+Reservation* CancellationHistory::CancelReservation(Node<Reservation>*& head, Node<Reservation>*& tail) {
     int id;
 
     cout << "Reservation ID: ";
@@ -23,7 +23,7 @@ std::string CancellationHistory::CancelReservation(Node<Reservation>*& head, Nod
 
     if (!node) {
         cout << "No reservation found with ID " << id << ".\n\n" << flush;
-        return ""; 
+        return nullptr; 
     }
 
     //capture the resource ID of the cancelled reservation before deleting it
@@ -49,7 +49,7 @@ std::string CancellationHistory::CancelReservation(Node<Reservation>*& head, Nod
     cout << "Reservation Cancelled.\n";
     cout << "Added to cancellation history.\n\n" << flush;
 
-    return resID; // return the resource ID of the cancelled reservation
+    return &node->value; // return the resource ID of the cancelled reservation
 }
 
 void CancellationHistory::RestoreReservation(Node<Reservation>*& head, Node<Reservation>*& tail) {
@@ -88,11 +88,12 @@ void CancellationHistory::DisplayHistory() const {
         cout << "Cancellation History:\n";
         while (!temp.empty()) {
             const Reservation& r = temp.top();
+            const string d = r.GetDate().ToString();
             cout << "ID: " << r.GetId() 
                  << ", Student ID: " << r.GetStudentId() 
                  << ", Student Name: " << r.GetStudentName() 
                  << ", Resource ID: " << r.GetResourceId() 
-                 << ", Date: " << r.GetDate() << endl;
+                 << ", Date: " << d << endl;
             temp.pop();
         }
         cout << endl;

@@ -6,7 +6,7 @@ Reservation::Reservation(
     int studId, 
     const string& studName, 
     const string& resId, 
-    const string& date
+    const Date& date
 ) {
     this->id = id;
     this->studId = studId;
@@ -31,6 +31,6 @@ string Reservation::GetResourceId() const {
     return resId;
 }
 
-string Reservation::GetDate() const {
+const Date& Reservation::GetDate() const {
     return date;
 }

@@ -5,6 +5,7 @@ set(EXECUTABLE_NAME ${PROJECT_NAME})
 
 set(SOURCE_FILES
     "src/CancellationHistory.cpp"
+    "src/Date.cpp"
     "src/main.cpp"
     "src/Reservation.cpp"
     "src/ReservationManager.cpp"

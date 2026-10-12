@@ -12,6 +12,7 @@
 #include "Node.h"
 #include "WaitingList.h"
 #include "CancellationHistory.h"
+#include "Date.h"
 
 #define ADD_LIST \
 Node<Reservation>* listNode = new Node<Reservation>(node->value);\
@@ -59,9 +60,9 @@ class ReservationManager {
 
         Resource* FindResource(const std::string& resID);
 
-        void MakeReservation(int studId, const std::string& studNAme, const std::string& resID);
+        void MakeReservation(int studId, const std::string& studNAme, const std::string& resID, const Date& date);
 
-        bool IsResourceBookedOnDate(const std::string& resID, const std::string& date) const;
+        bool IsResourceBookedOnDate(const std::string& resID, const Date& date) const;
 
         
 };

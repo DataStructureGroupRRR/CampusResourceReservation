@@ -37,6 +37,8 @@ void ReservationManager::ViewReservations(Node<Reservation>* head) {
 
     node = head;
     while (node) {
+        string d = node->value.GetDate().ToString();
+
         cout << right;
         cout << setfill('0') << setw(3) << node->value.GetId();
         cout << setfill(' ') << setw(5) << "";
@@ -46,7 +48,7 @@ void ReservationManager::ViewReservations(Node<Reservation>* head) {
         cout << left;
         cout << setw(studLen) << node->value.GetStudentName();
         cout << setw(14) << node->value.GetResourceId();
-        cout << setw(12) << node->value.GetDate() << endl;
+        cout << setw(12) << d << endl;
 
         node = node->next;
     }
@@ -84,6 +86,10 @@ void ReservationManager::ReadResources(ifstream& file) {
         getline(file, name, '|');
         getline(file, type, '|');
         getline(file, availableS);
+
+        if (availableS.back() == '\r') {
+            availableS.pop_back();
+        }
 
         Resource rs(id, name, type, availableS == "Available");
         resources.push_back(rs);
@@ -150,16 +156,9 @@ Resource* ReservationManager::FindResource(const string& resId) {
  * @param studName The student's name.
  * @param resId The resource ID.
  */
-void ReservationManager::MakeReservation(int studId, const string& studName, const string& resId) {
-    char date[11];
-
+void ReservationManager::MakeReservation(int studId, const string& studName, const string& resId, const Date& date) {
     highestId++;
-
-    // Get the current date in MM/DD/YYYY format
-    time_t timestamp = time(nullptr);
-    tm* dateTime = localtime(&timestamp);
-    strftime(date, 11, "%m/%d/%Y", dateTime);
-
+    
     // Create a new reservation and add it to the linked list
     Reservation r(highestId, studId, studName, resId, date);
     Node<Reservation>* node = new Node<Reservation>(r);
@@ -184,8 +183,12 @@ void ReservationManager::CreateReservation() {
     string studName;
     string resId;
     
-    cout << "Student ID: ";
+    cout << "Student ID +(1-4 digits): ";
     cin >> studId;
+    while (studId < 0 || studId > 9999) {
+        cout << "Please reenter in the correct format: ";
+        cin >> studId;
+    }
     cin.get();
     
     cout << "Student Name: ";
@@ -204,22 +207,49 @@ void ReservationManager::CreateReservation() {
         cout << "Resource " << resId << " is currently unavailable.\n\n" << flush;
         return;
     }
+    
+    Date today = Date::Today();
+    int todayYear = today.year;
 
-    char date[11];
-    time_t timestamp = time(nullptr);
-    tm* dateTime = localtime(&timestamp);
-    strftime(date, 11, "%m/%d/%Y", dateTime);
+    Date date;
+    cout << "Enter reservation date with m/d/Y 00/00/0000 format: ";
+    while (true) {
+        if (!scanf("%d/%d/%d", &date.month, &date.day, &date.year)) {
+            cout << "Please reenter the date in the correct format: ";
+            continue;
+        }
+
+        if (date.year < 1) {
+            date.year = todayYear;
+        } else if (date.year < 10) {
+            date.year += (todayYear / 10) * 10;
+        } else if (date.year < 100) {
+            date.year += (todayYear / 100) * 100;
+        } else if (date.year < 1000) {
+            date.year += (todayYear / 1000) * 1000;
+        }
+        
+        if (date < today) {
+            cout << "Please enter a valid date: ";
+            continue;
+        }
+        
+        break;
+    }
+
+    string dateS = date.ToString();
+    cout << dateS << endl;
 
     // Check if the resource is already booked on the current date
     if (IsResourceBookedOnDate(resId, date)){
-        waitingLists[resId].AddStudent(studId, studName, date);
-        cout << "Resource " << resId << " is already booked for " << date <<". "<< studName<< " have been added to the waiting list.\n\n" << flush;
+        waitingLists[resId].AddStudent(studId, studName, resId);
+        cout << "Resource " << resId << " is already booked for " << dateS <<". "<< studName<< " has been added to the waiting list.\n\n" << flush;
     }else{
-        MakeReservation(studId, studName, resId);
+        MakeReservation(studId, studName, resId, date);
         cout << "Reservation created!\n";
         cout << "Reservation ID: " << highestId << "\n";
         cout << "Resource ID: " << resId << "\n";
-        cout << "Date: " << date << "\n\n" << flush;
+        cout << "Date: " << dateS << "\n\n" << flush;
     }
 }
 
@@ -227,24 +257,25 @@ void ReservationManager::CreateReservation() {
  * Cancels a reservation and assigns the resource to the next student in the waiting list if applicable.
  */
 void ReservationManager::CancelReservation() {
-    string resId = cancellationHistory.CancelReservation(head, tail);
-
-    if (resId.empty()) {
+    Reservation* res = cancellationHistory.CancelReservation(head, tail);
+    if (!res) {
         return; // no reservation was cancelled
     }
 
-    auto it = waitingLists.find(resId);
+    string rescId = res->GetResourceId();
+
+    auto it = waitingLists.find(res->GetResourceId());
     if (it != waitingLists.end() && !it->second.IsEmpty()) {
         WaitingStudent nextStudent (0,"","");
         it->second.RemoveStudent(nextStudent); //dequeue the front
 
          // Resource it's handed directly to the next student
-        MakeReservation(nextStudent.studId , nextStudent.studName, resId);
+        MakeReservation(nextStudent.studId , nextStudent.studName, rescId, res->GetDate());
 
-        cout<<"Resource "<<resId<<" has been assigned to the next student in the waiting list: "<<nextStudent.studName<<" (Student ID: "<<nextStudent.studId<<").\n\n"<<flush;
+        cout<<"Resource "<< rescId <<" has been assigned to the next student in the waiting list: "<<nextStudent.studName<<" (Student ID: "<<nextStudent.studId<<").\n\n"<<flush;
     }else{
         //If nobody is waiting: restore availability
-       cout<<"Reservation cancelled. No students are waiting for resource "<<resId<<". It is now available for booking.\n\n"<<flush;
+       cout<<"Reservation cancelled. No students are waiting for resource "<< rescId <<". It is now available for booking.\n\n"<<flush;
     }
 
 }
@@ -399,7 +430,7 @@ void ReservationManager::ViewWaitingLists() const {
  * @param date The date to check in MM/DD/YYYY format.
  * @return True if the resource is booked on the given date, false otherwise.
  */
-bool ReservationManager::IsResourceBookedOnDate(const std::string& resID, const std::string& date) const {
+bool ReservationManager::IsResourceBookedOnDate(const std::string& resID, const Date& date) const {
     Node<Reservation>* node = head;
     while (node) {
         if (node->value.GetResourceId() == resID && node->value.GetDate() == date) {

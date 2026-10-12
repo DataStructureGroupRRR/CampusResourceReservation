@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "Date.h"
+
 class Reservation {
     public:
         Reservation(
@@ -10,20 +12,20 @@ class Reservation {
             int studId, 
             const std::string& studName, 
             const std::string& resId, 
-            const std::string& date
+            const Date& date
         );
 
         int GetId() const;
         int GetStudentId() const;
         std::string GetStudentName() const;
         std::string GetResourceId() const;
-        std::string GetDate() const;
+        const Date& GetDate() const;
     private:
         int id;
         int studId;
         std::string studName;
         std::string resId;
-        std::string date;
+        Date date;
 };
 
 #endif // RESERVATION_H
