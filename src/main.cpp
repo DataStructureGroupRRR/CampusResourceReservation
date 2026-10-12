@@ -24,19 +24,20 @@ int main() {
     resourceFile.close();
 
     // main menu loop
-    while (choice != 10) {
+    while (choice != 12) {
         cout << "===== Campus Resource Reservation System =====\n";
         cout << "1. View Resources\n";
-        cout << "2. Create Reservation\n";
-        cout << "3. Cancel Reservation\n";
-        cout << "4. View Waiting Lists\n";
-        cout << "5. Undo Cancellation\n";
-        cout << "6. Search Reservations\n";
-        cout << "7. Sort Resources\n";
-        cout << "8. Generate Report\n";
-        cout << "9. View Cancellation History\n";
-        cout << "10. Exit\n";
-        cout << "11. Search Resource by ID\n\n" << flush;
+        cout << "2. View Reservations\n";
+        cout << "3. Create Reservation\n";
+        cout << "4. Cancel Reservation\n";
+        cout << "5. View Waiting Lists\n";
+        cout << "6. Undo Cancellation\n";
+        cout << "7. Search Reservations\n";
+        cout << "8. Sort Resources\n";
+        cout << "9. Generate Report\n";
+        cout << "10. View Cancellation History\n";
+        cout << "11. Search Resource by ID\n";
+        cout << "12. Exit\n\n" << flush;
 
         cout << "Enter Choice: ";
         cin >> choice;
@@ -47,18 +48,21 @@ int main() {
                 reservMan.ViewResources();
                 break;
             case 2:
-                reservMan.CreateReservation();
+                reservMan.ViewReservations();
                 break;
             case 3:
-                reservMan.CancelReservation();
+                reservMan.CreateReservation();
                 break;
             case 4:
-                reservMan.ViewWaitingLists();
+                reservMan.CancelReservation();
                 break;
             case 5:
+                reservMan.ViewWaitingLists();
+                break;
+            case 6:
                 reservMan.RestoreReservation();
                 break;
-            case 6: {
+            case 7: {
                 reservMan.ViewReservations();
 
                 Node<Reservation>* searchHead = nullptr;
@@ -75,19 +79,19 @@ int main() {
                 }
                 break;
             }
-            case 7:
+            case 8:
                 reservMan.SortResourcesByName();
                 break;
-            case 8:
+            case 9:
                 reservMan.GenerateReport();
                 break;
-            case 9:
+            case 10:
                 reservMan.ViewCancellationHistory();
                 break;
             case 11:
                 reservMan.SearchResourceById();
                 break;
-            case 10:
+            case 12:
                 cout << "Exiting the program. Goodbye!" << endl;
                 break;
             default:
